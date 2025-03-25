@@ -1,3 +1,7 @@
 <?php
-// Load your module routes
-include base_path('./modules/Blog/routes/web.php');
+
+use Illuminate\Support\Facades\Route;
+
+Route::get('/', function () {
+    return view('welcome');
+});
