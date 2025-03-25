@@ -1,13 +1,18 @@
 <?php
 
-namespace Modules\Blog\Models;
+namespace Modules\PkgProduit\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Produit extends Model
 {
-    use HasFactory;
+    // Define the table if it is not the plural of the model name
+    protected $table = 'produits';
 
-    protected $fillable = ['nom', 'stock', 'prix'];
+    // Allow mass assignment for these fields
+    protected $fillable = [
+        'nom',
+        'stock',
+        'prix'
+    ];
 }

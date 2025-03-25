@@ -1,24 +1,21 @@
-Voici un fichier `README.md` bien structuré avec les commandes Laravel populaires et du code essentiel pour ton projet EFM.  
+# 🧪 **Laravel Assessment – Day 2: Product Catalog with Dynamic Alerts**
+
+## 🧩 **General Context**
+
+You need to develop an **autonomous and modular Laravel module** named `PkgProduit`, placed inside the `modules/` folder.
+
+This module allows you to:
+
+-   Manage a **product catalog** (name, price, stock).
+-   Store **dynamic business rules** (saved in the database as expressions).
+-   Evaluate these rules **dynamically using a `RuleEngine` class**.
+-   Display only **alerted products** in a **dashboard widget**.
 
 ---
 
-# 🧪 **Contrôle Laravel – Jour 2 : Catalogue de produits avec alertes dynamiques**
+## 🛠️ **Mandatory Technical Constraint**
 
-## 🧩 **Contexte général**  
-
-Tu dois développer un **module Laravel autonome et modulaire** nommé `PkgProduit`, placé dans le dossier `modules/`.  
-
-Ce module permet de :  
-- Gérer un **catalogue de produits** (nom, prix, stock)  
-- Enregistrer des **règles métier dynamiques** (stockées en base sous forme d'expressions)  
-- Évaluer ces règles **dynamiquement via une classe `RuleEngine`**  
-- Afficher uniquement les **produits en alerte**, dans un **widget de tableau de bord**  
-
----
-
-## 🛠️ **Contrainte technique obligatoire**  
-
-Le projet doit être développé en **architecture modulaire Laravel**, avec l’arborescence suivante :  
+The project must follow a **modular Laravel architecture** with the following structure:
 
 ```
 modules/
@@ -32,198 +29,140 @@ modules/
     └── lang/
 ```
 
-Le module doit être **déclaré via un Service Provider personnalisé**.  
-Aucune logique métier ne doit sortir du module.  
+The module must be **declared via a custom Service Provider**.
+All business logic must remain within the module.
 
 ---
 
-## 🚀 **Installation et configuration**  
+## ❗️**Condition for Accessing the Next Section**
 
-### 1️⃣ **Cloner le projet**  
-```sh
-git clone https://github.com/ton-repo/catalogue-produits.git
-cd catalogue-produits
-composer install
-```
-
-### 2️⃣ **Créer le fichier `.env` et générer la clé d’application**  
-```sh
-cp .env.example .env
-php artisan key:generate
-```
-
-### 3️⃣ **Configurer la base de données (`.env`)**  
-```env
-DB_CONNECTION=mysql
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_DATABASE=catalogue_db
-DB_USERNAME=root
-DB_PASSWORD=
-```
-
-### 4️⃣ **Exécuter les migrations et insérer les données de test**  
-```sh
-php artisan migrate --seed
-```
-
-### 5️⃣ **Lancer le serveur**  
-```sh
-php artisan serve
-```
+-   If you score **at least 4/5** in Section 1, you proceed.
+-   Otherwise, you restart with a **new topic**. Your initial score (out of 5) remains, and the remaining parts will be graded out of 35.
 
 ---
 
-## 📁 **Modèle logique de données (MLD)**  
+## 🧾 Logical Data Model (LDM)
 
-| Table        | Champs                                        |
-|--------------|-----------------------------------------------|
-| **produits** | id, nom, stock, prix, created_at, updated_at  |
-| **rules**    | id, label, expression (type `text`)           |
-
----
-
-## 🔧 **Commandes Laravel utiles**  
-
-| Commande                            | Description |
-|-------------------------------------|------------|
-| `php artisan make:model Produit -m` | Créer un modèle avec une migration |
-| `php artisan make:controller ProduitController --resource` | Générer un contrôleur CRUD |
-| `php artisan make:service RuleEngine` | Créer un service Laravel |
-| `php artisan migrate` | Exécuter les migrations |
-| `php artisan db:seed` | Insérer les données de test |
-| `php artisan tinker` | Ouvrir une console interactive Laravel |
-| `php artisan route:list` | Afficher toutes les routes du projet |
-| `php artisan cache:clear` | Vider le cache Laravel |
+| Table        | Fields                                         |
+| ------------ | ---------------------------------------------- |
+| **produits** | id, name, stock, price, created_at, updated_at |
+| **rules**    | id, label, expression (type `text`)            |
 
 ---
 
-## 🔹 **Code essentiel**  
+# 📁 **Section 1 – Prototype: Dynamic Rule Engine**
 
-### 📌 **1. Classe `RuleEngine` pour évaluer les règles dynamiques**  
+📖 _Documentation allowed_
+
+### 🧮 Maximum Score: 5 points
+
+### ⏱️ Duration: 30 minutes
+
+### 🎯 Objective:
+
+Implement a `RuleEngine` class capable of dynamically evaluating a business rule (expressed as text) against a product.
+
+### 🔹 Tasks:
+
+#### Q1.1 – Create a `RuleEngine` class with a method:
 
 ```php
-namespace Modules\PkgProduit\App\Services;
-
-class RuleEngine
-{
-    public function evaluate(string $expression, array $data): bool
-    {
-        extract($data); // Extrait les variables pour être utilisables dans l’expression
-        try {
-            return eval("return $expression;");
-        } catch (\Throwable $e) {
-            return false; // Gérer les erreurs d’évaluation
-        }
-    }
-}
+public function evaluate(string $expression, array $data): bool
 ```
 
-### 📌 **2. Migration pour la table `produits`**  
+**(2 pts)**
 
-```php
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
+#### Q1.2 – Simulate a product (e.g., `['stock' => 2, 'price' => 150]`), apply a rule (e.g., `stock < 5 && price > 100`), and display the result in a simple view.
 
-return new class extends Migration {
-    public function up()
-    {
-        Schema::create('produits', function (Blueprint $table) {
-            $table->id();
-            $table->string('nom');
-            $table->integer('stock');
-            $table->decimal('prix', 8, 2);
-            $table->timestamps();
-        });
-    }
-
-    public function down()
-    {
-        Schema::dropIfExists('produits');
-    }
-};
-```
-
-### 📌 **3. Contrôleur `ProduitController` pour gérer les produits**  
-
-```php
-namespace Modules\PkgProduit\Controllers;
-
-use Illuminate\Http\Request;
-use Modules\PkgProduit\Models\Produit;
-
-class ProduitController extends Controller
-{
-    public function index()
-    {
-        $produits = Produit::latest()->paginate(10);
-        return view('PkgProduit::produits.index', compact('produits'));
-    }
-
-    public function store(Request $request)
-    {
-        $request->validate([
-            'nom' => 'required|string|max:255',
-            'stock' => 'required|integer|min:0',
-            'prix' => 'required|numeric|min:0'
-        ]);
-
-        Produit::create($request->all());
-
-        return response()->json(['message' => 'Produit ajouté avec succès'], 200);
-    }
-}
-```
-
-### 📌 **4. Vue `dashboard.blade.php` pour afficher les produits en alerte**  
-
-```html
-@extends('layouts.app')
-
-@section('content')
-<div class="container">
-    <h2>🔔 Produits en alerte</h2>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Nom</th>
-                <th>Stock</th>
-                <th>Prix</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach($produits as $produit)
-                <tr>
-                    <td>{{ $produit->nom }}</td>
-                    <td>{{ $produit->stock }}</td>
-                    <td>{{ $produit->prix }} €</td>
-                </tr>
-            @endforeach
-        </tbody>
-    </table>
-</div>
-@endsection
-```
+**(3 pts)**
 
 ---
 
-## ✅ **Résumé des barèmes**  
+# 📁 **Section 2 – Creating & Paginated Display of Products**
 
-| Dossier        | Description                                        | Note |
-|----------------|----------------------------------------------------|------|
-| Dossier 1      | Prototype – moteur de règles dynamiques            | /5   |
-| Dossier 2      | Création (AJAX + modal) + affichage paginé         | /10  |
-| Dossier 3      | Tableau de bord avec widget d’alertes dynamiques   | /25  |
-| **Total**      |                                                    | **/40** |
+### 🧮 Maximum Score: 10 points
+
+### ⏱️ Duration: 1 hour
+
+### 🎯 Objective:
+
+Allow users to add products via an **AJAX modal form** and display stored products with **pagination**.
+
+### 🔹 Tasks:
+
+#### Q2.1 – Create the `Produit` model, its migration, and the controller within the module.
+
+**(2 pts)**
+
+#### Q2.2 – Create a view with an "Add Product" button → Opens a modal containing the form.
+
+**(2 pts)**
+
+#### Q2.3 – Submit the form via AJAX and display validation errors inside the modal.
+
+**(3 pts)**
+
+#### Q2.4 – Display products in a **paginated table (10 per page)**, sorted by creation date (descending).
+
+**(3 pts)**
 
 ---
 
-## 🎯 **Objectifs du projet**  
+# 📁 **Section 3 – Dashboard with Dynamic Alert Widget**
 
-- ✅ Développer un **module Laravel modulaire**  
-- ✅ Implémenter un **moteur de règles dynamiques**  
-- ✅ Afficher uniquement les **produits en alerte** dans un **widget de tableau de bord**  
-- ✅ Utiliser des **formulaires AJAX** pour la gestion des produits  
+### 🧮 Maximum Score: 25 points
 
-📌 **Prêt à coder ? Lance-toi ! 🚀**
+### ⏱️ Duration: 1 hour 30 minutes
+
+### 🎯 Objective:
+
+Create a **responsive dashboard** with a **widget** displaying only **alerted products**—i.e., those that match **at least one business rule**.
+
+### 🔹 Tasks:
+
+#### Q3.1 – Create the `rules` table with a migration and model, and insert **at least two rules** (with explicit labels).
+
+**(3 pts)**
+
+#### Q3.2 – Implement an `AlertService` with a public method:
+
+```php
+public function getProduitsEnAlerte(): Collection
+```
+
+This method should:
+
+-   Retrieve all products.
+-   Retrieve all rules.
+-   Dynamically apply each rule to each product using `RuleEngine`.
+-   Return only the products for which **at least one rule evaluates to true**.
+    **(8 pts)**
+
+#### Q3.3 – Create a `dashboard.blade.php` view containing a **widget** (styled card or block) displaying the list of alerted products.
+
+**(7 pts)**
+
+#### Q3.4 – Handle all `RuleEngine` evaluation errors:
+
+-   Invalid expressions (e.g., `stock => 5`).
+-   Missing variables (`price`, `stock`, etc.).
+-   Non-boolean results.
+    Display clean error messages without breaking the interface.
+    **(7 pts)**
+
+#### Q3.5 – Ensure the dashboard interface is **responsive and works on both PC and mobile** (Bootstrap recommended).
+
+**(2 pts)**
+
+---
+
+## ✅ **Grading Summary**
+
+| Section   | Description                                  | Score   |
+| --------- | -------------------------------------------- | ------- |
+| Section 1 | Prototype – Dynamic Rule Engine              | /5      |
+| Section 2 | Product Creation (AJAX + modal) + Pagination | /10     |
+| Section 3 | Dashboard with Dynamic Alert Widget          | /25     |
+| **Total** |                                              | **/40** |
+
+---
