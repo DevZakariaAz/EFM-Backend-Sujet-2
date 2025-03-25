@@ -1,105 +1,3 @@
-Voici le code complet pour chaque étape de la tâche **📁 Dossier 2 – Création + affichage paginé des produits** en Laravel avec Bootstrap et AJAX.
-
----
-
-## 🔹 **Étape 1: Création du modèle, de la migration et du contrôleur**
-**Commande à exécuter :**  
-```sh
-php artisan make:model Product -mcr
-```
-Cela va générer :  
-- **Le modèle `Product.php`**
-- **La migration `create_products_table.php`**
-- **Le contrôleur `ProductController.php`**
-
----
-
-### **1️⃣ Modèle : `app/Models/Product.php`**
-```php
-namespace App\Models;
-
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-
-class Product extends Model
-{
-    use HasFactory;
-
-    protected $fillable = ['nom', 'stock', 'prix'];
-}
-```
-
----
-
-### **2️⃣ Migration : `database/migrations/xxxx_xx_xx_xxxxxx_create_products_table.php`**
-```php
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
-
-return new class extends Migration {
-    public function up()
-    {
-        Schema::create('products', function (Blueprint $table) {
-            $table->id();
-            $table->string('nom');
-            $table->integer('stock');
-            $table->decimal('prix', 10, 2);
-            $table->timestamps();
-        });
-    }
-
-    public function down()
-    {
-        Schema::dropIfExists('products');
-    }
-};
-```
-**Exécuter la migration :**  
-```sh
-php artisan migrate
-```
-
----
-
-### **3️⃣ Contrôleur : `app/Http/Controllers/ProductController.php`**
-```php
-namespace App\Http\Controllers;
-
-use App\Models\Product;
-use Illuminate\Http\Request;
-
-class ProductController extends Controller
-{
-    public function index()
-    {
-        $products = Product::orderBy('created_at', 'desc')->paginate(10);
-        return view('products.index', compact('products'));
-    }
-
-    public function store(Request $request)
-    {
-        $request->validate([
-            'nom' => 'required|string|max:255',
-            'stock' => 'required|integer|min:0',
-            'prix' => 'required|numeric|min:0'
-        ]);
-
-        $product = Product::create($request->all());
-
-        return response()->json([
-            'message' => 'Produit ajouté avec succès!',
-            'product' => $product
-        ]);
-    }
-}
-```
-
----
-
-## 🔹 **Étape 2: Vue avec un bouton "Ajouter un produit" (modal Bootstrap)**
-### **4️⃣ Vue : `resources/views/products/index.blade.php`**
-```html
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -125,13 +23,13 @@ class ProductController extends Controller
             </tr>
         </thead>
         <tbody id="productTable">
-            @foreach ($products as $product)
+            @foreach ($produits as $Produit)
                 <tr>
-                    <td>{{ $product->id }}</td>
-                    <td>{{ $product->nom }}</td>
-                    <td>{{ $product->stock }}</td>
-                    <td>{{ $product->prix }} €</td>
-                    <td>{{ $product->created_at->format('d/m/Y H:i') }}</td>
+                    <td>{{ $Produit->id }}</td>
+                    <td>{{ $Produit->nom }}</td>
+                    <td>{{ $Produit->stock }}</td>
+                    <td>{{ $Produit->prix }} €</td>
+                    <td>{{ $Produit->created_at->format('d/m/Y H:i') }}</td>
                 </tr>
             @endforeach
         </tbody>
@@ -139,7 +37,7 @@ class ProductController extends Controller
 
     <!-- Pagination -->
     <div class="d-flex justify-content-center">
-        {{ $products->links() }}
+        {{ $produits->links() }}
     </div>
 </div>
 
@@ -188,7 +86,7 @@ $(document).ready(function() {
         $('.text-danger').text('');
         
         $.ajax({
-            url: "{{ route('products.store') }}",
+            url: "{{ route('produits.store') }}",
             type: "POST",
             data: $(this).serialize(),
             success: function(response) {
@@ -206,26 +104,3 @@ $(document).ready(function() {
 </script>
 </body>
 </html>
-```
-
----
-
-## 🔹 **Étape 3: Configuration des routes**
-Ajoutez ceci dans **`routes/web.php`** :
-```php
-use App\Http\Controllers\ProductController;
-
-Route::get('/products', [ProductController::class, 'index'])->name('products.index');
-Route::post('/products', [ProductController::class, 'store'])->name('products.store');
-```
-
----
-
-### ✅ **Résultat Final**
-✔ **Ajout de produit via un formulaire modal AJAX**  
-✔ **Affichage des erreurs de validation**  
-✔ **Liste des produits paginée (10 produits par page)**  
-✔ **Tri par date de création décroissante**  
-
-🎯 **Objectif atteint en 1 heure !** 🚀🔥  
-Si tu veux des améliorations ou des fonctionnalités supplémentaires, dis-moi ! 😊
