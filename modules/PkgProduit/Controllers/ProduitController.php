@@ -5,7 +5,7 @@ namespace Modules\PkgProduit\Controllers;
 use App\Http\Controllers\Controller;
 use Modules\PkgProduit\App\Services\ProduitService;
 use Illuminate\Http\Request;
-
+use Modules\PkgProduit\App\Services\AlertService;
 class ProduitController extends Controller
 {
     protected $produitService;
@@ -15,10 +15,17 @@ class ProduitController extends Controller
         $this->produitService = $produitService;
     }
 
-    public function index()
+    // public function index()
+    // {
+    //     $produits = $this->produitService->getAllProduits();
+    //     return view('PkgProduit::produits.index', compact('produits'));
+    // }
+
+    public function index(AlertService $alertService)
     {
         $produits = $this->produitService->getAllProduits();
-        return view('PkgProduit::produits.index', compact('produits'));
+        $alertProducts = $alertService->getProduitsEnAlerte();
+        return view('PkgProduit::produits.index', compact('alertProducts', 'produits'));
     }
 
     public function store(Request $request)

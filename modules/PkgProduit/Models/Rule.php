@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Models;
+namespace Modules\PkgProduit\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Product extends Model
+class Rule extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['nom', 'stock', 'prix'];
+    protected $fillable = ['label', 'expression'];
 }

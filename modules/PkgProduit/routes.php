@@ -6,6 +6,8 @@ use Modules\PkgProduit\Controllers\ProduitController;
 
 Route::get('/rule-engine-test', [RuleEngineController::class, 'testRule'])
     ->name('rule.engine.test');
+Route::get('/dashboard', [ProduitController::class, 'index'])
+    ->name('dashboard');
 
 Route::get('/produits', [ProduitController::class, 'index'])->name('produits.index');
 Route::post('/produits', [ProduitController::class, 'store'])->name('produits.store');

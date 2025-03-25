@@ -5,8 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Produits</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-        <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 <body class="bg-light">
@@ -22,6 +21,7 @@
                 <th>Stock</th>
                 <th>Prix</th>
                 <th>Créé le</th>
+                <th>Règle</th> <!-- Nouvelle colonne pour la règle -->
             </tr>
         </thead>
         <tbody id="productTable">
@@ -32,6 +32,17 @@
                     <td>{{ $Produit->stock }}</td>
                     <td>{{ $Produit->prix }} €</td>
                     <td>{{ $Produit->created_at->format('d/m/Y H:i') }}</td>
+                    <td>
+                        @php
+                            $alert = $alertProducts->firstWhere('produit_id', $Produit->id);
+                        @endphp
+
+                        @if($alert && $alert->rule)
+                            {{ $alert->rule->label }}
+                        @else
+                            Rule 2
+                        @endif
+                    </td>
                 </tr>
             @endforeach
         </tbody>
@@ -67,7 +78,7 @@
                         <small class="text-danger" id="error-stock"></small>
                     </div>
                     <div class="form-group">
-                        <label for="prix">Prix</label>7
+                        <label for="prix">Prix</label>
                         <input type="number" class="form-control" id="prix" name="prix" required>
                         <small class="text-danger" id="error-prix"></small>
                     </div>
