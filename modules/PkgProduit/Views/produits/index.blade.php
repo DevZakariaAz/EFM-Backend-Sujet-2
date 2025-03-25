@@ -5,12 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Produits</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
     <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 <body class="bg-light">
 <div class="container mt-5">
     <h2 class="text-center">Gestion des Produits</h2>
-    <button class="btn btn-primary mb-3" data-toggle="modal" data-target="#addProductModal">+ Ajouter un Produit</button>
+    <button class="btn btn-info mb-3" data-toggle="modal" data-target="#addProductModal">+ Ajouter un Produit</button>
 
     <table class="table table-bordered bg-white">
         <thead>
@@ -65,11 +67,11 @@
                         <small class="text-danger" id="error-stock"></small>
                     </div>
                     <div class="form-group">
-                        <label for="prix">Prix</label>
+                        <label for="prix">Prix</label>7
                         <input type="number" class="form-control" id="prix" name="prix" required>
                         <small class="text-danger" id="error-prix"></small>
                     </div>
-                    <button type="submit" class="btn btn-primary">Ajouter</button>
+                    <button type="submit" class="btn btn-info">Ajouter</button>
                 </form>
             </div>
         </div>
