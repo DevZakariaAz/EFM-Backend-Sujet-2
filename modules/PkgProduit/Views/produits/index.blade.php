@@ -34,7 +34,7 @@
                     <td>{{ $Produit->created_at->format('d/m/Y H:i') }}</td>
                     <td>
                         @php
-                            $alert = $alertProducts->firstWhere('produit_id', $Produit->id);
+                            $alert = $alertProducts->firstWhere('produit_id', $Produit->id);    
                         @endphp
 
                         @if($alert && $alert->rule)
