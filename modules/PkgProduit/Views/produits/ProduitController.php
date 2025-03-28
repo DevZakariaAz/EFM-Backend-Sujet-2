@@ -15,11 +15,17 @@ class ProduitController extends Controller
         $this->produitService = $produitService;
     }
 
+    // public function index()
+    // {
+    //     $produits = $this->produitService->getAllProduits();
+    //     return view('PkgProduit::produits.index', compact('produits'));
+    // }
+
     public function index(AlertService $alertService)
     {
         $produits = $this->produitService->getAllProduits();
         $alertProducts = $alertService->getProduitsEnAlerte();
-        return view('PkgProduit::dashboard', compact('alertProducts', 'produits'));
+        return view('PkgProduit::dashbord', compact('alertProducts', 'produits'));
     }
 
     public function store(Request $request)
